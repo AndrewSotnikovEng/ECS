@@ -12,8 +12,15 @@ public class App
 {
     public static void main( String[] args ) throws BiffException, IOException
     {
-    	FileSystemFunc.getFiles();
-    	DtpBook dtp = new DtpBook("/media/Maindata/Дело/das_code/java/DtpFileProject/dtpFile1.xls");
+    	
+    	for (String fName : FileSystemFunc.getExcelFiles()) {
+        	DtpBook dtp = new DtpBook(fName);
+        	dtp.generateVarSheets();
+
+        	dtp.close();
+		}
+    	
+
     	
     }
 }
