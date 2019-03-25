@@ -1,6 +1,5 @@
-package org.ecs.project.DtpFileProject;
+package entity;
 
-import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,15 +8,16 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+import db.MsAccessConnector;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
 public class DtpBook {
 
 	private Workbook wb;
-	//sheet names which contains vars
+	// sheet names which contains vars
 	private ArrayList<String> sheets = new ArrayList<String>();
-	//rows with data from vars sheets
+	// rows with data from vars sheets
 	private ArrayList<VarSheetRow> rows = new ArrayList<VarSheetRow>();;
 
 	public DtpBook(String fName) throws BiffException, IOException {
@@ -28,13 +28,13 @@ public class DtpBook {
 	}
 
 	public ArrayList<VarSheetRow> getRows() {
-		
+
 		return rows;
-		
+
 	}
 
-	/*	Get a sheet names where enounter vars.
-	 * 	Results put in "sheets"
+	/*
+	 * Get a sheet names where enounter vars. Results put in "sheets"
 	 * 
 	 */
 	private void putVarSheets() {
@@ -56,7 +56,7 @@ public class DtpBook {
 	}
 
 	public void generateVarSheets() {
-		
+
 		this.putVarSheets();
 
 		for (String sheet : sheets) {
@@ -88,16 +88,30 @@ public class DtpBook {
 		}
 
 	}
-	
+
 	private void printBookName(String fName) {
 
-		//cut after last slash
-	    int index=fName.lastIndexOf('/') + 1;
-	    fName = fName.substring(index, fName.length());
-	    System.out.println();
+		// cut after last slash
+		int index = fName.lastIndexOf('/') + 1;
+		fName = fName.substring(index, fName.length());
+		System.out.println();
 		System.out.println(StringUtils.repeat("*", 60));
 		System.out.println(StringUtils.center("  " + fName + "  ", 60, "*"));
 		System.out.println(StringUtils.repeat("*", 60));
+	}
+
+	public void flushRowsToDb(MsAccessConnector db) {
+
+		for (VarSheetRow row : this.rows) {
+			// remove this
+			try {
+				db.addRow(row);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	public void close() {
@@ -106,7 +120,5 @@ public class DtpBook {
 		wb.close();
 
 	}
-	
-	
 
 }
