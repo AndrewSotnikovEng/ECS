@@ -5,8 +5,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+/*
+ * 	FsUtils - provides method for working with file system.
+ *  *  
+ */
+
+
 public class FsUtils {
 
+	/*
+	 * Getting all files in current directory
+	 */
 	private static ArrayList<String> getAllFiles() {
 
 		File folder = new File(".");
@@ -16,18 +25,22 @@ public class FsUtils {
 		// regex pattern - ".*xlsx?$"
 
 		for (File file : listOfFiles) {
-			// lookin for a file with Excel extenstion
+			// looking for a file with Excel extension
 			if (file.isFile() && Pattern.matches(".*xlsx?$", file.getName())) {
 
 				listOfFileName.add(file.getName());
-
 			}
 		}
 
 		return listOfFileName;
 	}
 
-	public static ArrayList<String> getExcelFiles() {
+	
+	/*
+	 * Generate absolute path to Excel files in current directory.
+	 * 
+	 */
+	public static ArrayList<String> getAbsExcelFilesPath() {
 
 		ArrayList<String> absPaths = new ArrayList<String>();
 

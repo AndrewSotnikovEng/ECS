@@ -1,6 +1,5 @@
 package entity;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +8,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import db.MsAccessConnector;
 
-import jxl.read.biff.BiffException;
 
 public class DtpBook {
 
@@ -25,7 +25,8 @@ public class DtpBook {
 	// rows with data from vars sheets
 	private ArrayList<VarSheetRow> rows = new ArrayList<VarSheetRow>();;
 
-	public DtpBook(String fName) throws BiffException, IOException {
+	public DtpBook(String fName) throws IOException, 
+	EncryptedDocumentException, InvalidFormatException {
 
 		InputStream inp = new FileInputStream(fName);
 		this.wb = WorkbookFactory.create(inp);
@@ -40,7 +41,7 @@ public class DtpBook {
 	}
 
 	/*
-	 * Get a sheet names where enounter vars. Results put in "sheets"
+	 * Get a sheet names where encounter vars. Results put in "sheets"
 	 * 
 	 */
 	private void putVarSheets() {
@@ -96,6 +97,9 @@ public class DtpBook {
 
 	}
 
+	/*
+	 * 	Print a human readable name of current working wile.
+	 */
 	private void printBookName(String fName) {
 
 		// cut after last slash
@@ -107,6 +111,10 @@ public class DtpBook {
 		System.out.println(StringUtils.repeat("*", 60));
 	}
 
+	
+	/*
+	 * 	Upload previously retrieved rows to Ms Access db file.
+	 */
 	public void flushRowsToDb(MsAccessConnector db) {
 
 		for (VarSheetRow row : this.rows) {

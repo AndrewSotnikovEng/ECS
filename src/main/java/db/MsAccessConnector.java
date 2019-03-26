@@ -14,6 +14,14 @@ import com.healthmarketscience.jackcess.TableBuilder;
 
 import entity.VarSheetRow;
 
+
+/*
+ * 	MsAccessConnector - provides a connector for working with MsAccess
+ *  db file. It is able to create table if note exists, and write rows
+ *  from Excel files. 
+ *  
+ */
+
 public class MsAccessConnector {
 
 	private Database db = null;
@@ -21,7 +29,7 @@ public class MsAccessConnector {
 
 	public MsAccessConnector() {
 		try {
-			File dbFile = new File("testDB.accdb");
+			File dbFile = new File("Dtp_output.accdb");
 
 			if (dbFile.exists() && !dbFile.isDirectory()) {
 				this.db = DatabaseBuilder.open(dbFile);
@@ -37,7 +45,10 @@ public class MsAccessConnector {
 		return this.db;
 	}
 
-	// creating VarSheets table if not exist
+	/* 
+	 * Creating VarSheets table if not exist
+	 * 
+	 */
 	public void createTable() {
 
 		try {
@@ -56,7 +67,10 @@ public class MsAccessConnector {
 
 	}
 
-	// adding row to Ms Access db table
+	/* 
+	 * Adding row to Ms Access db table
+	 * 
+	 */
 	public void addRow(VarSheetRow varRow) throws IOException {
 
 		this.table = this.db.getTable("VarSheets");
@@ -64,7 +78,6 @@ public class MsAccessConnector {
 
 	}
 
-	// simply close connection
 	public void closeDb() {
 
 		try {
