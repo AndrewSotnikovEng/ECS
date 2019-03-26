@@ -1,15 +1,20 @@
 package entity;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import db.MsAccessConnector;
-import jxl.Workbook;
+
 import jxl.read.biff.BiffException;
 
 public class DtpBook {
@@ -22,7 +27,8 @@ public class DtpBook {
 
 	public DtpBook(String fName) throws BiffException, IOException {
 
-		this.wb = Workbook.getWorkbook(new File(fName));
+		InputStream inp = new FileInputStream(fName);
+		this.wb = WorkbookFactory.create(inp);
 		this.printBookName(fName);
 
 	}
@@ -41,14 +47,14 @@ public class DtpBook {
 
 		String regex = ".*vars.*";
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-		String[] sheetNames = this.wb.getSheetNames();
+		
 
-		for (int i = 0; i < sheetNames.length; i++) {
+		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 
-			Matcher matcher = pattern.matcher(sheetNames[i]);
+			Matcher matcher = pattern.matcher(wb.getSheetName(i));
 			if (matcher.find()) {
 
-				this.sheets.add(sheetNames[i]);
+				this.sheets.add(wb.getSheetName(i));
 			}
 
 		}
@@ -71,15 +77,16 @@ public class DtpBook {
 		String desc;
 		String req;
 
+	 	Sheet sheet = this.wb.getSheet(name);
 		// getting limitation cells
-		int limRowIndex = this.wb.getSheet(name).getRows();
+		int limRowIndex = sheet.getPhysicalNumberOfRows();
 		System.out.println("\n" + name + "\n");
 		// get vars sheet row
 		for (int i = 1; i < limRowIndex; i++) {
 
-			comp = this.wb.getSheet(name).getCell(1, i).getContents();
-			desc = this.wb.getSheet(name).getCell(2, i).getContents();
-			req = this.wb.getSheet(name).getCell(3, i).getContents();
+			comp = sheet.getRow(i).getCell(1).getRichStringCellValue().toString();
+			desc = sheet.getRow(i).getCell(2).getRichStringCellValue().toString();
+			req = sheet.getRow(i).getCell(3).getRichStringCellValue().toString();
 
 			VarSheetRow row = new VarSheetRow(comp, desc, req);
 			System.out.println(row);
@@ -117,7 +124,12 @@ public class DtpBook {
 	public void close() {
 
 		// Close and free allocated memory
-		wb.close();
+		try {
+			wb.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
