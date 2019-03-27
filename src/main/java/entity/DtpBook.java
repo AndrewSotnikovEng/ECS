@@ -85,13 +85,20 @@ public class DtpBook {
 		// get vars sheet row
 		for (int i = 1; i < limRowIndex; i++) {
 
-			comp = sheet.getRow(i).getCell(1).getRichStringCellValue().toString();
-			desc = sheet.getRow(i).getCell(2).getRichStringCellValue().toString();
-			req = sheet.getRow(i).getCell(3).getRichStringCellValue().toString();
+			//exception valid in a case, if we occasionally catch empty row
+			try {
+				comp = sheet.getRow(i).getCell(1).getRichStringCellValue().toString();
+				desc = sheet.getRow(i).getCell(2).getRichStringCellValue().toString();
+				req = sheet.getRow(i).getCell(3).getRichStringCellValue().toString();
 
-			VarSheetRow row = new VarSheetRow(comp, desc, req);
-			System.out.println(row);
-			rows.add(row);
+				VarSheetRow row = new VarSheetRow(comp, desc, req);
+				System.out.println(row);
+				rows.add(row);
+				
+			} catch (NullPointerException exception) {
+				// TODO Auto-generated catch block
+				
+			}
 
 		}
 
